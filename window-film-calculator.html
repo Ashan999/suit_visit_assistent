@@ -1,0 +1,1568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>FilmCalc Pro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<style>
+  :root {
+    --bg: #f0f4f8;
+    --surface: #ffffff;
+    --surface2: #f7f9fc;
+    --border: #e2e8f0;
+    --border2: #cbd5e1;
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #94a3b8;
+    --accent: #2563eb;
+    --accent-light: #dbeafe;
+    --accent-dark: #1d4ed8;
+    --success: #059669;
+    --success-light: #d1fae5;
+    --danger: #dc2626;
+    --danger-light: #fee2e2;
+    --warning: #d97706;
+    --warning-light: #fef3c7;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+    --shadow-lg: 0 12px 32px rgba(0,0,0,0.12), 0 4px 8px rgba(0,0,0,0.06);
+    --radius: 14px;
+    --radius-sm: 8px;
+    --radius-lg: 20px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ─── HEADER ─── */
+  .app-header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .header-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .header-logo {
+    width: 36px; height: 36px;
+    background: var(--accent);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .header-logo svg { width: 20px; height: 20px; fill: white; }
+
+  .header-title { font-size: 17px; font-weight: 700; letter-spacing: -0.3px; color: var(--text-primary); }
+  .header-sub { font-size: 11px; color: var(--text-muted); font-weight: 400; }
+
+  .header-actions { display: flex; gap: 8px; }
+
+  .btn-icon {
+    width: 38px; height: 38px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: all 0.15s;
+    color: var(--text-secondary);
+  }
+  .btn-icon:hover { background: var(--surface2); border-color: var(--border2); }
+  .btn-icon svg { width: 18px; height: 18px; }
+
+  /* ─── MAIN CONTAINER ─── */
+  .container {
+    max-width: 560px;
+    margin: 0 auto;
+    padding: 20px 16px 100px;
+  }
+
+  /* ─── JOB SETUP SCREEN ─── */
+  .screen { display: none; animation: fadeUp 0.3s ease; }
+  .screen.active { display: block; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 16px;
+  }
+
+  .card-title {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .card-title::before {
+    content: '';
+    display: block;
+    width: 3px; height: 14px;
+    background: var(--accent);
+    border-radius: 2px;
+  }
+
+  .form-group { margin-bottom: 16px; }
+  .form-group:last-of-type { margin-bottom: 0; }
+
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+  }
+
+  input[type="text"] {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: inherit;
+    font-size: 15px;
+    color: var(--text-primary);
+    background: var(--surface);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  input[type="text"]:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+  }
+
+  .btn-primary {
+    width: 100%;
+    padding: 14px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .btn-primary:hover { background: var(--accent-dark); transform: translateY(-1px); box-shadow: var(--shadow); }
+  .btn-primary:active { transform: translateY(0); }
+
+  /* ─── JOB INFO BAR ─── */
+  .job-bar {
+    background: var(--accent);
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(37,99,235,0.25);
+  }
+
+  .job-bar-info { color: rgba(255,255,255,0.75); font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.6px; }
+  .job-bar-name { color: white; font-size: 16px; font-weight: 700; margin-top: 2px; }
+
+  .job-bar-badge {
+    background: rgba(255,255,255,0.15);
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+    backdrop-filter: blur(4px);
+  }
+
+  /* ─── STEP INDICATOR ─── */
+  .step-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .step-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    position: relative;
+  }
+
+  .step-item:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    right: -1px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1px;
+    height: 28px;
+    background: var(--border);
+  }
+
+  .step-num {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700;
+    background: var(--surface2);
+    color: var(--text-muted);
+    border: 1.5px solid var(--border);
+    transition: all 0.3s;
+  }
+
+  .step-item.active .step-num {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+    box-shadow: 0 2px 8px rgba(37,99,235,0.35);
+  }
+
+  .step-item.done .step-num {
+    background: var(--success);
+    color: white;
+    border-color: var(--success);
+  }
+
+  .step-label {
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+
+  .step-item.active .step-label { color: var(--accent); font-weight: 600; }
+  .step-item.done .step-label { color: var(--success); }
+
+  /* ─── WIDTH BUTTONS ─── */
+  .width-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+
+  .width-btn {
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 12px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .width-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--accent);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .width-btn:hover {
+    border-color: var(--accent);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow);
+  }
+
+  .width-btn.selected {
+    border-color: var(--accent);
+    background: var(--accent);
+    transform: scale(0.96);
+    box-shadow: 0 4px 16px rgba(37,99,235,0.4);
+  }
+
+  .width-btn-num {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1;
+    position: relative;
+    z-index: 1;
+    font-family: 'DM Mono', monospace;
+    transition: color 0.2s;
+  }
+
+  .width-btn-unit {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    position: relative;
+    z-index: 1;
+    transition: color 0.2s;
+  }
+
+  .width-btn.selected .width-btn-num,
+  .width-btn.selected .width-btn-unit { color: white; }
+
+  .width-hint {
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 4px;
+    padding: 8px;
+    background: var(--accent-light);
+    border-radius: var(--radius-sm);
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  /* ─── KEYPAD ─── */
+  .keypad-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    box-shadow: var(--shadow);
+  }
+
+  .keypad-display {
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin-bottom: 16px;
+    min-height: 70px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .keypad-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+
+  .keypad-value {
+    font-size: 38px;
+    font-weight: 700;
+    color: var(--text-primary);
+    font-family: 'DM Mono', monospace;
+    line-height: 1;
+  }
+
+  .keypad-value.placeholder { color: var(--text-muted); font-size: 24px; font-weight: 400; }
+
+  .keypad-context {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+    text-align: center;
+    padding: 8px 12px;
+    background: var(--warning-light);
+    border-radius: var(--radius-sm);
+    border: 1px solid #fde68a;
+  }
+
+  .keypad-context strong { color: var(--warning); }
+
+  .keypad-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+
+  .key {
+    padding: 16px 8px;
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--border);
+    background: var(--surface);
+    font-family: 'DM Mono', monospace;
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.12s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    box-shadow: 0 2px 0 var(--border);
+  }
+
+  .key:hover { background: var(--surface2); border-color: var(--border2); }
+  .key:active { transform: translateY(1px); box-shadow: none; }
+
+  .key-backspace {
+    background: var(--danger-light);
+    border-color: #fca5a5;
+    color: var(--danger);
+    font-size: 18px;
+  }
+
+  .key-backspace:hover { background: #fecaca; }
+
+  .key-enter {
+    background: var(--accent);
+    border-color: var(--accent-dark);
+    color: white;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    grid-column: span 2;
+    box-shadow: 0 2px 0 var(--accent-dark);
+  }
+
+  .key-enter:hover { background: var(--accent-dark); }
+  .key-enter:active { box-shadow: none; }
+
+  .key-zero { grid-column: span 1; }
+
+  /* ─── TABLE SECTION ─── */
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+
+  .section-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .count-badge {
+    background: var(--accent-light);
+    color: var(--accent);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 20px;
+  }
+
+  .btn-secondary {
+    padding: 8px 14px;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.15s;
+  }
+
+  .btn-secondary:hover { border-color: var(--border2); background: var(--surface2); }
+
+  .table-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 16px;
+  }
+
+  table { width: 100%; border-collapse: collapse; }
+
+  thead tr { background: var(--surface2); border-bottom: 1px solid var(--border); }
+
+  th {
+    padding: 10px 12px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--text-muted);
+  }
+
+  th:last-child, td:last-child { text-align: right; }
+
+  td {
+    padding: 11px 12px;
+    font-size: 13px;
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+
+  tr:last-child td { border-bottom: none; }
+
+  tr:hover td { background: var(--surface2); }
+
+  .td-mono { font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 500; }
+
+  .td-sqm {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent);
+  }
+
+  .width-pill {
+    display: inline-flex;
+    align-items: center;
+    background: var(--accent-light);
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 12px;
+    padding: 3px 9px;
+    border-radius: 20px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .row-actions { display: flex; gap: 6px; justify-content: flex-end; }
+
+  .btn-edit, .btn-delete {
+    padding: 5px 10px;
+    border-radius: 6px;
+    border: 1.5px solid;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+
+  .btn-edit { background: var(--accent-light); border-color: #bfdbfe; color: var(--accent); }
+  .btn-edit:hover { background: #bfdbfe; }
+  .btn-delete { background: var(--danger-light); border-color: #fca5a5; color: var(--danger); }
+  .btn-delete:hover { background: #fecaca; }
+
+  .empty-state {
+    padding: 40px 20px;
+    text-align: center;
+    color: var(--text-muted);
+  }
+
+  .empty-state-icon { font-size: 36px; margin-bottom: 12px; }
+  .empty-state-text { font-size: 14px; font-weight: 500; }
+  .empty-state-sub { font-size: 12px; margin-top: 4px; }
+
+  /* ─── SUMMARY ─── */
+  .summary-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .summary-row {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.15s;
+  }
+
+  .summary-row:hover { border-color: var(--border2); }
+
+  .summary-roll-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .roll-icon {
+    width: 34px; height: 34px;
+    background: var(--accent-light);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .roll-icon svg { width: 16px; height: 16px; stroke: var(--accent); fill: none; stroke-width: 2; }
+
+  .summary-roll-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+  .summary-roll-count { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+
+  .summary-sqm { font-family: 'DM Mono', monospace; font-size: 18px; font-weight: 700; color: var(--accent); }
+  .summary-sqm-unit { font-size: 11px; color: var(--text-muted); font-weight: 400; font-family: 'DM Sans', sans-serif; }
+
+  .grand-total-card {
+    background: var(--accent);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 6px 20px rgba(37,99,235,0.3);
+    margin-bottom: 20px;
+  }
+
+  .gt-label { color: rgba(255,255,255,0.75); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px; }
+  .gt-value { color: white; font-size: 32px; font-weight: 700; font-family: 'DM Mono', monospace; line-height: 1; margin-top: 4px; }
+  .gt-unit { color: rgba(255,255,255,0.6); font-size: 13px; margin-left: 4px; }
+
+  .gt-icon {
+    width: 52px; height: 52px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .gt-icon svg { width: 26px; height: 26px; stroke: white; fill: none; stroke-width: 2; }
+
+  /* ─── ACTION BUTTONS ─── */
+  .action-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .btn-action {
+    padding: 13px;
+    border-radius: var(--radius-sm);
+    border: 1.5px solid;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    transition: all 0.2s;
+  }
+
+  .btn-action svg { width: 16px; height: 16px; }
+
+  .btn-add-entry {
+    background: var(--success-light);
+    border-color: #86efac;
+    color: var(--success);
+    grid-column: span 2;
+  }
+  .btn-add-entry:hover { background: #bbf7d0; }
+
+  .btn-pdf {
+    background: var(--surface);
+    border-color: var(--border);
+    color: var(--text-secondary);
+  }
+  .btn-pdf:hover { border-color: var(--border2); background: var(--surface2); }
+
+  .btn-clear {
+    background: var(--danger-light);
+    border-color: #fca5a5;
+    color: var(--danger);
+  }
+  .btn-clear:hover { background: #fecaca; }
+
+  /* ─── MODAL EDIT ─── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(15,23,42,0.5);
+    z-index: 200;
+    align-items: flex-end;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+  }
+
+  .modal-overlay.open { display: flex; animation: fadeIn 0.2s ease; }
+
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .modal {
+    background: var(--surface);
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    padding: 24px;
+    width: 100%;
+    max-width: 560px;
+    animation: slideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  @keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+
+  .modal-handle {
+    width: 40px; height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    margin: 0 auto 20px;
+  }
+
+  .modal-title { font-size: 17px; font-weight: 700; margin-bottom: 20px; }
+
+  .modal-form-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .modal-field label { font-size: 12px; font-weight: 500; color: var(--text-secondary); margin-bottom: 6px; display: block; }
+
+  .modal-field input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: 'DM Mono', monospace;
+    font-size: 15px;
+    font-weight: 500;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .modal-field input:focus { border-color: var(--accent); }
+
+  .modal-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  .btn-modal-cancel {
+    padding: 12px;
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    cursor: pointer;
+  }
+
+  .btn-modal-save {
+    padding: 12px;
+    background: var(--accent);
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    color: white;
+    cursor: pointer;
+  }
+
+  /* ─── FAB ─── */
+  .fab {
+    position: fixed;
+    bottom: 24px;
+    right: 20px;
+    width: 56px; height: 56px;
+    background: var(--accent);
+    border-radius: 16px;
+    box-shadow: 0 6px 20px rgba(37,99,235,0.4);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 99;
+  }
+
+  .fab:hover { transform: scale(1.1); box-shadow: 0 8px 24px rgba(37,99,235,0.5); }
+  .fab svg { width: 24px; height: 24px; stroke: white; fill: none; stroke-width: 2.5; }
+  .fab.hidden { display: none; }
+
+  /* ─── TOAST ─── */
+  .toast {
+    position: fixed;
+    bottom: 90px;
+    left: 50%; transform: translateX(-50%);
+    background: var(--text-primary);
+    color: white;
+    padding: 10px 18px;
+    border-radius: 30px;
+    font-size: 13px;
+    font-weight: 500;
+    z-index: 300;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+
+  .toast.show { opacity: 1; }
+
+  /* New entry row animation */
+  @keyframes rowIn {
+    from { opacity: 0; background: var(--accent-light); }
+    to { opacity: 1; background: transparent; }
+  }
+  .new-row td { animation: rowIn 0.6s ease; }
+
+  /* ─── RESPONSIVE ─── */
+  @media (min-width: 480px) {
+    .width-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  @media (max-width: 360px) {
+    .width-btn-num { font-size: 22px; }
+    .key { padding: 14px 8px; font-size: 18px; }
+    .keypad-value { font-size: 30px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="app-header">
+  <div class="header-brand">
+    <div class="header-logo">
+      <svg viewBox="0 0 24 24"><path d="M3 3h18v18H3z" opacity=".2"/><rect x="5" y="5" width="14" height="14" rx="1" opacity=".6"/><path d="M9 9h6v6H9z"/></svg>
+    </div>
+    <div>
+      <div class="header-title">FilmCalc Pro</div>
+      <div class="header-sub">Window Film Calculator</div>
+    </div>
+  </div>
+  <div class="header-actions">
+    <button class="btn-icon" onclick="exportPDF()" title="Export PDF" id="pdfBtn" style="display:none">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+    </button>
+    <button class="btn-icon" onclick="showSetup()" title="New Job" id="newJobBtn" style="display:none">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    </button>
+  </div>
+</header>
+
+<!-- SETUP SCREEN -->
+<div class="container">
+  <div id="setupScreen" class="screen active">
+    <div style="text-align:center; padding: 24px 0 28px;">
+      <div style="font-size:48px; margin-bottom:12px;">🪟</div>
+      <div style="font-size:22px; font-weight:800; letter-spacing:-0.5px; color:var(--text-primary);">Start a New Job</div>
+      <div style="font-size:14px; color:var(--text-muted); margin-top:6px;">Enter job details to begin calculating</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Job Details</div>
+      <div class="form-group">
+        <label>Job Name</label>
+        <input type="text" id="jobName" placeholder="e.g. Office Tower – Level 3" />
+      </div>
+      <div class="form-group">
+        <label>Customer Name</label>
+        <input type="text" id="customerName" placeholder="e.g. Acme Corporation" />
+      </div>
+    </div>
+    <button class="btn-primary" onclick="startJob()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9,18 15,12 9,6"/></svg>
+      Start Calculating
+    </button>
+  </div>
+
+  <!-- MAIN CALCULATOR SCREEN -->
+  <div id="mainScreen" class="screen">
+    <div class="job-bar">
+      <div>
+        <div class="job-bar-info">Active Job</div>
+        <div class="job-bar-name" id="jobBarName">—</div>
+      </div>
+      <div class="job-bar-badge" id="jobBarCustomer">—</div>
+    </div>
+
+    <!-- STEP INDICATOR -->
+    <div class="step-indicator">
+      <div class="step-item active" id="step1ind">
+        <div class="step-num">1</div>
+        <div class="step-label">Width</div>
+      </div>
+      <div class="step-item" id="step2ind">
+        <div class="step-num">2</div>
+        <div class="step-label">Height</div>
+      </div>
+      <div class="step-item" id="step3ind">
+        <div class="step-num">3</div>
+        <div class="step-label">Qty</div>
+      </div>
+    </div>
+
+    <!-- STEP 1: WIDTH -->
+    <div id="step1" class="step-panel">
+      <div class="card" style="padding:20px">
+        <div class="card-title">Select Roll Width</div>
+        <div class="width-grid">
+          <button class="width-btn" onclick="selectWidth(36, this)">
+            <span class="width-btn-num">36</span>
+            <span class="width-btn-unit">inches</span>
+          </button>
+          <button class="width-btn" onclick="selectWidth(42, this)">
+            <span class="width-btn-num">42</span>
+            <span class="width-btn-unit">inches</span>
+          </button>
+          <button class="width-btn" onclick="selectWidth(48, this)">
+            <span class="width-btn-num">48</span>
+            <span class="width-btn-unit">inches</span>
+          </button>
+          <button class="width-btn" onclick="selectWidth(54, this)">
+            <span class="width-btn-num">54</span>
+            <span class="width-btn-unit">inches</span>
+          </button>
+          <button class="width-btn" onclick="selectWidth(60, this)">
+            <span class="width-btn-num">60</span>
+            <span class="width-btn-unit">inches</span>
+          </button>
+          <button class="width-btn" onclick="selectWidth(72, this)">
+            <span class="width-btn-num">72</span>
+            <span class="width-btn-unit">inches</span>
+          </button>
+        </div>
+        <div class="width-hint">Tap a roll width to continue →</div>
+      </div>
+    </div>
+
+    <!-- STEP 2: HEIGHT -->
+    <div id="step2" class="step-panel" style="display:none">
+      <div class="keypad-card">
+        <div class="keypad-display">
+          <div class="keypad-label">Height (inches)</div>
+          <div class="keypad-value" id="heightDisplay"><span class="placeholder">Enter height…</span></div>
+        </div>
+        <div class="keypad-context">
+          Roll Width: <strong id="selectedWidthLabel">—</strong> &nbsp;·&nbsp; Enter the height in inches
+        </div>
+        <div class="keypad-grid">
+          <button class="key" onclick="keyPress('7')">7</button>
+          <button class="key" onclick="keyPress('8')">8</button>
+          <button class="key" onclick="keyPress('9')">9</button>
+          <button class="key" onclick="keyPress('4')">4</button>
+          <button class="key" onclick="keyPress('5')">5</button>
+          <button class="key" onclick="keyPress('6')">6</button>
+          <button class="key" onclick="keyPress('1')">1</button>
+          <button class="key" onclick="keyPress('2')">2</button>
+          <button class="key" onclick="keyPress('3')">3</button>
+          <button class="key key-backspace" onclick="keyBackspace()">⌫</button>
+          <button class="key key-zero" onclick="keyPress('0')">0</button>
+          <button class="key key-enter" onclick="keyEnterHeight()">ENTER</button>
+        </div>
+      </div>
+      <button class="btn-secondary" style="margin-top:12px" onclick="goBack(1)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15,18 9,12 15,6"/></svg>
+        Back
+      </button>
+    </div>
+
+    <!-- STEP 3: QTY -->
+    <div id="step3" class="step-panel" style="display:none">
+      <div class="keypad-card">
+        <div class="keypad-display">
+          <div class="keypad-label">Quantity (pcs)</div>
+          <div class="keypad-value" id="qtyDisplay"><span class="placeholder">Enter qty…</span></div>
+        </div>
+        <div class="keypad-context">
+          <strong id="entryPreview">—</strong>
+        </div>
+        <div class="keypad-grid">
+          <button class="key" onclick="keyPress2('7')">7</button>
+          <button class="key" onclick="keyPress2('8')">8</button>
+          <button class="key" onclick="keyPress2('9')">9</button>
+          <button class="key" onclick="keyPress2('4')">4</button>
+          <button class="key" onclick="keyPress2('5')">5</button>
+          <button class="key" onclick="keyPress2('6')">6</button>
+          <button class="key" onclick="keyPress2('1')">1</button>
+          <button class="key" onclick="keyPress2('2')">2</button>
+          <button class="key" onclick="keyPress2('3')">3</button>
+          <button class="key key-backspace" onclick="keyBackspace2()">⌫</button>
+          <button class="key key-zero" onclick="keyPress2('0')">0</button>
+          <button class="key key-enter" onclick="keyEnterQty()">ENTER</button>
+        </div>
+      </div>
+      <button class="btn-secondary" style="margin-top:12px" onclick="goBack(2)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15,18 9,12 15,6"/></svg>
+        Back
+      </button>
+    </div>
+
+    <!-- DIVIDER -->
+    <div style="height:24px"></div>
+
+    <!-- ENTRIES TABLE -->
+    <div class="section-header">
+      <div class="section-title">
+        Entries
+        <span class="count-badge" id="entryCount">0</span>
+      </div>
+      <button class="btn-secondary" onclick="addNewEntry()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add Entry
+      </button>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Width</th>
+            <th>Height</th>
+            <th>Qty</th>
+            <th>Sqm</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="entriesTable">
+          <tr>
+            <td colspan="5">
+              <div class="empty-state">
+                <div class="empty-state-icon">📐</div>
+                <div class="empty-state-text">No entries yet</div>
+                <div class="empty-state-sub">Select a width above to get started</div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SUMMARY -->
+    <div id="summarySection" style="display:none">
+      <div class="section-header" style="margin-top:4px">
+        <div class="section-title">Summary by Roll Size</div>
+      </div>
+      <div class="summary-grid" id="summaryGrid"></div>
+      <div class="grand-total-card">
+        <div>
+          <div class="gt-label">Grand Total</div>
+          <div class="gt-value" id="grandTotal">0.00 <span class="gt-unit">sqm</span></div>
+        </div>
+        <div class="gt-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        </div>
+      </div>
+
+      <div class="action-row">
+        <button class="btn-action btn-pdf" onclick="exportPDF()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
+          Export PDF
+        </button>
+        <button class="btn-action btn-clear" onclick="clearAll()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3,6 5,6 21,6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+          Clear All
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FAB -->
+<button class="fab hidden" id="fab" onclick="addNewEntry()">
+  <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+</button>
+
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Edit Entry</div>
+    <div class="modal-form-row">
+      <div class="modal-field">
+        <label>Width (in)</label>
+        <input type="number" id="editWidth" />
+      </div>
+      <div class="modal-field">
+        <label>Height (in)</label>
+        <input type="number" id="editHeight" />
+      </div>
+      <div class="modal-field">
+        <label>Qty</label>
+        <input type="number" id="editQty" />
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-modal-save" onclick="saveEdit()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── STATE ───
+let state = {
+  job: { name: '', customer: '' },
+  entries: [],
+  currentWidth: null,
+  currentHeight: null,
+  heightInput: '',
+  qtyInput: '',
+  editIndex: -1,
+  nextId: 1
+};
+
+const SQIN_PER_SQM = 1550;
+
+// ─── PERSIST ───
+function save() {
+  localStorage.setItem('filmcalc', JSON.stringify(state));
+}
+
+function load() {
+  try {
+    const d = localStorage.getItem('filmcalc');
+    if (d) { state = { ...state, ...JSON.parse(d) }; }
+  } catch(e) {}
+}
+
+// ─── INIT ───
+load();
+if (state.job.name) { bootMain(); } else { showScreen('setupScreen'); }
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function showSetup() {
+  state.job = { name: '', customer: '' };
+  document.getElementById('jobName').value = '';
+  document.getElementById('customerName').value = '';
+  save();
+  document.getElementById('pdfBtn').style.display = 'none';
+  document.getElementById('newJobBtn').style.display = 'none';
+  document.getElementById('fab').classList.add('hidden');
+  showScreen('setupScreen');
+}
+
+function startJob() {
+  const name = document.getElementById('jobName').value.trim();
+  const customer = document.getElementById('customerName').value.trim();
+  if (!name) { showToast('Please enter a Job Name'); document.getElementById('jobName').focus(); return; }
+  if (!customer) { showToast('Please enter a Customer Name'); document.getElementById('customerName').focus(); return; }
+  state.job = { name, customer };
+  state.entries = [];
+  state.nextId = 1;
+  save();
+  bootMain();
+}
+
+function bootMain() {
+  document.getElementById('jobBarName').textContent = state.job.name;
+  document.getElementById('jobBarCustomer').textContent = state.job.customer;
+  document.getElementById('pdfBtn').style.display = '';
+  document.getElementById('newJobBtn').style.display = '';
+  showScreen('mainScreen');
+  goToStep(1);
+  renderTable();
+  renderSummary();
+}
+
+// ─── STEPS ───
+function setStepIndicator(step) {
+  for (let i = 1; i <= 3; i++) {
+    const el = document.getElementById(`step${i}ind`);
+    el.className = 'step-item' + (i < step ? ' done' : i === step ? ' active' : '');
+    if (i < step) el.querySelector('.step-num').innerHTML = '✓';
+    else el.querySelector('.step-num').textContent = i;
+  }
+}
+
+function goToStep(n) {
+  document.querySelectorAll('.step-panel').forEach(p => p.style.display = 'none');
+  document.getElementById(`step${n}`).style.display = 'block';
+  document.getElementById(`step${n}`).scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  setStepIndicator(n);
+
+  const fab = document.getElementById('fab');
+  fab.classList.toggle('hidden', n !== 1);
+}
+
+function goBack(toStep) {
+  if (toStep === 1) {
+    state.heightInput = '';
+    document.querySelectorAll('.width-btn').forEach(b => b.classList.remove('selected'));
+  }
+  if (toStep === 2) { state.qtyInput = ''; updateHeightDisplay(); }
+  goToStep(toStep);
+}
+
+// ─── STEP 1: WIDTH ───
+function selectWidth(w, btn) {
+  document.querySelectorAll('.width-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  state.currentWidth = w;
+  state.heightInput = '';
+  document.getElementById('selectedWidthLabel').textContent = w + '"';
+  updateHeightDisplay();
+  setTimeout(() => goToStep(2), 280);
+}
+
+// ─── STEP 2: HEIGHT KEYPAD ───
+function updateHeightDisplay() {
+  const el = document.getElementById('heightDisplay');
+  el.innerHTML = state.heightInput ? state.heightInput : '<span class="placeholder">Enter height…</span>';
+}
+
+function keyPress(d) {
+  if (state.heightInput.length >= 6) return;
+  state.heightInput += d;
+  updateHeightDisplay();
+}
+
+function keyBackspace() {
+  state.heightInput = state.heightInput.slice(0, -1);
+  updateHeightDisplay();
+}
+
+function keyEnterHeight() {
+  const h = parseInt(state.heightInput);
+  if (!h || h <= 0) { showToast('Please enter a valid height'); return; }
+  state.currentHeight = h;
+  state.qtyInput = '';
+  updateQtyDisplay();
+  const p = document.getElementById('entryPreview');
+  p.textContent = `${state.currentWidth}" wide × ${h}" high`;
+  goToStep(3);
+}
+
+// ─── STEP 3: QTY KEYPAD ───
+function updateQtyDisplay() {
+  const el = document.getElementById('qtyDisplay');
+  el.innerHTML = state.qtyInput ? state.qtyInput : '<span class="placeholder">Enter qty…</span>';
+}
+
+function keyPress2(d) {
+  if (state.qtyInput.length >= 4) return;
+  state.qtyInput += d;
+  updateQtyDisplay();
+}
+
+function keyBackspace2() {
+  state.qtyInput = state.qtyInput.slice(0, -1);
+  updateQtyDisplay();
+}
+
+function keyEnterQty() {
+  const qty = parseInt(state.qtyInput);
+  if (!qty || qty <= 0) { showToast('Please enter a valid quantity'); return; }
+  addEntry(state.currentWidth, state.currentHeight, qty);
+  state.heightInput = '';
+  state.qtyInput = '';
+  document.querySelectorAll('.width-btn').forEach(b => b.classList.remove('selected'));
+  goToStep(1);
+  showToast('✓ Entry added!');
+}
+
+// ─── ENTRIES ───
+function calcSqm(w, h, q) {
+  return (w * h * q) / SQIN_PER_SQM;
+}
+
+function addEntry(w, h, q) {
+  state.entries.push({ id: state.nextId++, width: w, height: h, qty: q });
+  save();
+  renderTable();
+  renderSummary();
+}
+
+function addNewEntry() {
+  goToStep(1);
+  document.querySelector('.step-indicator').scrollIntoView({ behavior: 'smooth' });
+}
+
+function deleteEntry(id) {
+  state.entries = state.entries.filter(e => e.id !== id);
+  save();
+  renderTable();
+  renderSummary();
+  showToast('Entry removed');
+}
+
+let editId = -1;
+
+function openEdit(id) {
+  const e = state.entries.find(x => x.id === id);
+  if (!e) return;
+  editId = id;
+  document.getElementById('editWidth').value = e.width;
+  document.getElementById('editHeight').value = e.height;
+  document.getElementById('editQty').value = e.qty;
+  document.getElementById('editModal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('editModal').classList.remove('open');
+}
+
+function saveEdit() {
+  const w = parseInt(document.getElementById('editWidth').value);
+  const h = parseInt(document.getElementById('editHeight').value);
+  const q = parseInt(document.getElementById('editQty').value);
+  if (!w || !h || !q || w <= 0 || h <= 0 || q <= 0) { showToast('Enter valid values'); return; }
+  const e = state.entries.find(x => x.id === editId);
+  if (e) { e.width = w; e.height = h; e.qty = q; }
+  closeModal();
+  save();
+  renderTable();
+  renderSummary();
+  showToast('Entry updated');
+}
+
+document.getElementById('editModal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+// ─── RENDER TABLE ───
+function renderTable() {
+  const tbody = document.getElementById('entriesTable');
+  const count = state.entries.length;
+  document.getElementById('entryCount').textContent = count;
+
+  if (count === 0) {
+    tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state">
+      <div class="empty-state-icon">📐</div>
+      <div class="empty-state-text">No entries yet</div>
+      <div class="empty-state-sub">Select a width above to get started</div>
+    </div></td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = state.entries.map((e, i) => {
+    const sqm = calcSqm(e.width, e.height, e.qty).toFixed(3);
+    const isNew = i === state.entries.length - 1 && state._lastAdded === e.id;
+    return `<tr class="${isNew ? 'new-row' : ''}">
+      <td><span class="width-pill">${e.width}"</span></td>
+      <td class="td-mono">${e.height}"</td>
+      <td class="td-mono">×${e.qty}</td>
+      <td class="td-sqm">${sqm}</td>
+      <td><div class="row-actions">
+        <button class="btn-edit" onclick="openEdit(${e.id})">Edit</button>
+        <button class="btn-delete" onclick="deleteEntry(${e.id})">Del</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+// ─── RENDER SUMMARY ───
+function renderSummary() {
+  const sec = document.getElementById('summarySection');
+  if (state.entries.length === 0) { sec.style.display = 'none'; return; }
+  sec.style.display = 'block';
+
+  // Group by width
+  const groups = {};
+  state.entries.forEach(e => {
+    if (!groups[e.width]) groups[e.width] = { total: 0, count: 0 };
+    groups[e.width].total += calcSqm(e.width, e.height, e.qty);
+    groups[e.width].count += e.qty;
+  });
+
+  const widths = Object.keys(groups).map(Number).sort((a,b) => a - b);
+  let grandTotal = 0;
+
+  const grid = document.getElementById('summaryGrid');
+  grid.innerHTML = widths.map(w => {
+    const g = groups[w];
+    grandTotal += g.total;
+    return `<div class="summary-row">
+      <div class="summary-roll-label">
+        <div class="roll-icon">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/></svg>
+        </div>
+        <div>
+          <div class="summary-roll-name">${w}" Roll</div>
+          <div class="summary-roll-count">${g.count} pcs · ${state.entries.filter(e=>e.width===w).length} lines</div>
+        </div>
+      </div>
+      <div style="text-align:right">
+        <div class="summary-sqm">${g.total.toFixed(3)}</div>
+        <div class="summary-sqm-unit">sqm</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('grandTotal').innerHTML = `${grandTotal.toFixed(3)} <span class="gt-unit">sqm</span>`;
+}
+
+// ─── PDF EXPORT ───
+function exportPDF() {
+  if (state.entries.length === 0) { showToast('No entries to export'); return; }
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+
+  // Header block
+  doc.setFillColor(37, 99, 235);
+  doc.rect(0, 0, 210, 40, 'F');
+
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(22);
+  doc.setFont('helvetica', 'bold');
+  doc.text('FilmCalc Pro', 14, 16);
+  doc.setFontSize(10);
+  doc.setFont('helvetica', 'normal');
+  doc.text('Window Film Material Calculator', 14, 24);
+
+  doc.setFontSize(11);
+  doc.setFont('helvetica', 'bold');
+  doc.text(state.job.name, 14, 33);
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(9);
+  doc.text(`Customer: ${state.job.customer}`, 14, 38.5);
+
+  const now = new Date();
+  doc.text(`Generated: ${now.toLocaleDateString()} ${now.toLocaleTimeString()}`, 140, 33, { align: 'right' });
+
+  // Entries table
+  doc.setTextColor(0, 0, 0);
+  doc.setFontSize(13);
+  doc.setFont('helvetica', 'bold');
+  doc.text('Detailed Entries', 14, 52);
+
+  const rows = state.entries.map((e, i) => [
+    i + 1,
+    `${e.width}"`,
+    `${e.height}"`,
+    e.qty,
+    calcSqm(e.width, e.height, e.qty).toFixed(3) + ' sqm'
+  ]);
+
+  doc.autoTable({
+    startY: 56,
+    head: [['#', 'Width', 'Height', 'Qty', 'Area (sqm)']],
+    body: rows,
+    styles: { fontSize: 9, cellPadding: 3 },
+    headStyles: { fillColor: [37, 99, 235], textColor: 255, fontStyle: 'bold' },
+    alternateRowStyles: { fillColor: [240, 244, 248] },
+    margin: { left: 14, right: 14 },
+    columnStyles: { 4: { halign: 'right' } }
+  });
+
+  const y1 = doc.lastAutoTable.finalY + 10;
+
+  // Summary table
+  doc.setFontSize(13);
+  doc.setFont('helvetica', 'bold');
+  doc.text('Summary by Roll Size', 14, y1);
+
+  const groups = {};
+  state.entries.forEach(e => {
+    if (!groups[e.width]) groups[e.width] = { total: 0, count: 0, lines: 0 };
+    groups[e.width].total += calcSqm(e.width, e.height, e.qty);
+    groups[e.width].count += e.qty;
+    groups[e.width].lines++;
+  });
+
+  const sumRows = Object.keys(groups).map(Number).sort((a,b)=>a-b).map(w => [
+    `${w}" Roll`,
+    groups[w].lines + ' lines',
+    groups[w].count + ' pcs',
+    groups[w].total.toFixed(3) + ' sqm'
+  ]);
+
+  doc.autoTable({
+    startY: y1 + 4,
+    head: [['Roll Size', 'Lines', 'Total Pcs', 'Total Area']],
+    body: sumRows,
+    styles: { fontSize: 9, cellPadding: 3 },
+    headStyles: { fillColor: [71, 85, 105], textColor: 255, fontStyle: 'bold' },
+    margin: { left: 14, right: 14 },
+    columnStyles: { 3: { halign: 'right' } }
+  });
+
+  const y2 = doc.lastAutoTable.finalY + 10;
+
+  // Grand total box
+  const grandTotal = state.entries.reduce((s, e) => s + calcSqm(e.width, e.height, e.qty), 0);
+  doc.setFillColor(37, 99, 235);
+  doc.roundedRect(14, y2, 182, 18, 3, 3, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(11);
+  doc.text('GRAND TOTAL', 22, y2 + 11);
+  doc.setFontSize(14);
+  doc.text(grandTotal.toFixed(3) + ' sqm', 196, y2 + 11, { align: 'right' });
+
+  // Footer
+  doc.setTextColor(148, 163, 184);
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(8);
+  doc.text('Generated by FilmCalc Pro', 14, 290);
+  doc.text('Page 1 of 1', 196, 290, { align: 'right' });
+
+  const fileName = `FilmCalc_${state.job.name.replace(/\s+/g,'_')}.pdf`;
+  doc.save(fileName);
+  showToast('PDF downloaded!');
+}
+
+// ─── CLEAR ───
+function clearAll() {
+  if (!confirm('Clear all entries for this job?')) return;
+  state.entries = [];
+  state.nextId = 1;
+  save();
+  renderTable();
+  renderSummary();
+  goToStep(1);
+  showToast('All entries cleared');
+}
+
+// ─── TOAST ───
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+</script>
+</body>
+</html>
