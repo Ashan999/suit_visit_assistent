@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>SAFA Architecture Film</title>
+<title>SAFA Masurment </title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -27,8 +27,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-prim
 /* ── HEADER ── */
 .app-header{background:var(--accent);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.3)}
 .header-brand{display:flex;align-items:center;gap:10px}
-.header-logo{width:38px;height:38px;background:var(--accent2);border-radius:10px;display:flex;align-items:center;justify-content:center}
-.header-logo svg{width:22px;height:22px;fill:white}
 .header-title{font-size:15px;font-weight:800;letter-spacing:.5px;color:#fff;text-transform:uppercase}
 .header-sub{font-size:10px;color:rgba(255,255,255,.5);letter-spacing:.5px;text-transform:uppercase}
 .header-actions{display:flex;gap:6px}
@@ -61,7 +59,7 @@ label{display:block;font-size:12px;font-weight:600;color:var(--text-secondary);m
 .ac-item:hover{background:var(--surface2)}
 
 /* ── BUTTONS ── */
-.btn-primary{width:100%;padding:14px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;letter-spacing:.3px}
+.btn-primary{width:100%;padding:14px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;letter-spacing:.3px;touch-action:manipulation}
 .btn-primary:hover{background:#2d2d2d;transform:translateY(-1px);box-shadow:var(--shadow)}
 .btn-primary.red{background:var(--accent2)}
 .btn-primary.red:hover{background:#a93226}
@@ -109,7 +107,7 @@ label{display:block;font-size:12px;font-weight:600;color:var(--text-secondary);m
 
 /* ── WIDTH BUTTONS ── */
 .width-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:10px}
-.width-btn{background:var(--surface);border:2px solid var(--border);border-radius:var(--radius);padding:16px 10px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;transition:all .2s cubic-bezier(.34,1.56,.64,1);box-shadow:var(--shadow-sm)}
+.width-btn{background:var(--surface);border:2px solid var(--border);border-radius:var(--radius);padding:16px 10px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;transition:all .2s cubic-bezier(.34,1.56,.64,1);box-shadow:var(--shadow-sm);touch-action:manipulation}
 .width-btn:hover{border-color:var(--accent2);transform:translateY(-2px);box-shadow:var(--shadow)}
 .width-btn.selected{border-color:var(--accent);background:var(--accent);transform:scale(.96);box-shadow:0 4px 16px rgba(0,0,0,.3)}
 .width-btn-num{font-size:22px;font-weight:700;color:var(--text-primary);line-height:1;font-family:'DM Mono',monospace;transition:color .2s}
@@ -131,7 +129,7 @@ label{display:block;font-size:12px;font-weight:600;color:var(--text-secondary);m
 .keypad-context{font-size:12px;margin-bottom:16px;text-align:center;padding:8px 12px;background:var(--warning-light);border-radius:var(--radius-sm);border:1px solid #fde68a;color:var(--text-secondary)}
 .keypad-context strong{color:var(--warning)}
 .keypad-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.key{padding:16px 8px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--surface);font-family:'DM Mono',monospace;font-size:20px;font-weight:500;color:var(--text-primary);cursor:pointer;transition:all .12s;display:flex;align-items:center;justify-content:center;user-select:none;box-shadow:0 2px 0 var(--border)}
+.key{padding:16px 8px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--surface);font-family:'DM Mono',monospace;font-size:20px;font-weight:500;color:var(--text-primary);cursor:pointer;transition:all .12s;display:flex;align-items:center;justify-content:center;user-select:none;box-shadow:0 2px 0 var(--border);touch-action:manipulation}
 .key:hover{background:var(--surface2);border-color:var(--border2)}
 .key:active{transform:translateY(1px);box-shadow:none}
 .key-backspace{background:var(--danger-light);border-color:#fca5a5;color:var(--danger);font-size:18px}
@@ -204,7 +202,7 @@ tr:hover td{background:var(--surface2)}
 /* ── ACTION BUTTONS ── */
 .action-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
 .action-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px}
-.btn-action{padding:12px;border-radius:var(--radius-sm);border:1.5px solid;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .2s}
+.btn-action{padding:12px;border-radius:var(--radius-sm);border:1.5px solid;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .2s;touch-action:manipulation}
 .btn-action svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2}
 .btn-pdf{background:var(--accent);border-color:#2d2d2d;color:#fff}
 .btn-pdf:hover{background:#2d2d2d}
@@ -308,9 +306,6 @@ tr:hover td{background:var(--surface2)}
 
 <header class="app-header">
   <div class="header-brand">
-    <div class="header-logo">
-      <svg viewBox="0 0 24 24"><path d="M3 3h18v18H3z" opacity=".3"/><rect x="5" y="5" width="14" height="14" rx="1" opacity=".7"/><path d="M9 9h6v6H9z"/></svg>
-    </div>
     <div>
       <div class="header-title">SAFA Architecture Film</div>
       <div class="header-sub">Window Film Calculator</div>
@@ -338,9 +333,6 @@ tr:hover td{background:var(--surface2)}
   <!-- ══ SETUP SCREEN ══ -->
   <div id="setupScreen" class="screen active">
     <div style="text-align:center;padding:28px 0 24px">
-      <div style="width:64px;height:64px;background:var(--accent);border-radius:20px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M3 3h18v18H3z" opacity=".3"/><rect x="5" y="5" width="14" height="14" rx="1" opacity=".7"/><path d="M9 9h6v6H9z"/></svg>
-      </div>
       <div style="font-size:22px;font-weight:800;letter-spacing:-.5px">New Job</div>
       <div style="font-size:14px;color:var(--text-muted);margin-top:6px">Enter job details to begin calculating</div>
     </div>
@@ -448,13 +440,13 @@ tr:hover td{background:var(--surface2)}
           <div class="keypad-value" id="heightDisplay"><span class="placeholder">Enter height…</span></div>
         </div>
         <div class="keypad-context">Roll Width: <strong id="selectedWidthLabel">—</strong> &nbsp;·&nbsp; Current Area: <strong id="currentAreaLabel">—</strong></div>
-        <div class="keypad-grid">
-          <button class="key" onclick="kp1('7')">7</button><button class="key" onclick="kp1('8')">8</button><button class="key" onclick="kp1('9')">9</button>
-          <button class="key" onclick="kp1('4')">4</button><button class="key" onclick="kp1('5')">5</button><button class="key" onclick="kp1('6')">6</button>
-          <button class="key" onclick="kp1('1')">1</button><button class="key" onclick="kp1('2')">2</button><button class="key" onclick="kp1('3')">3</button>
-          <button class="key key-backspace" onclick="kb1()">⌫</button>
-          <button class="key" onclick="kp1('0')">0</button>
-          <button class="key key-enter" onclick="enterHeight()">ENTER</button>
+        <div class="keypad-grid" id="heightKeypad">
+          <button class="key" data-kp1="7">7</button><button class="key" data-kp1="8">8</button><button class="key" data-kp1="9">9</button>
+          <button class="key" data-kp1="4">4</button><button class="key" data-kp1="5">5</button><button class="key" data-kp1="6">6</button>
+          <button class="key" data-kp1="1">1</button><button class="key" data-kp1="2">2</button><button class="key" data-kp1="3">3</button>
+          <button class="key key-backspace" data-kb1="1">⌫</button>
+          <button class="key" data-kp1="0">0</button>
+          <button class="key key-enter" data-enter-height="1">ENTER</button>
         </div>
       </div>
       <button class="btn-secondary" style="margin-top:12px" onclick="goBack(1)">
@@ -470,13 +462,13 @@ tr:hover td{background:var(--surface2)}
           <div class="keypad-value" id="qtyDisplay"><span class="placeholder">Enter qty…</span></div>
         </div>
         <div class="keypad-context"><strong id="entryPreview">—</strong></div>
-        <div class="keypad-grid">
-          <button class="key" onclick="kp2('7')">7</button><button class="key" onclick="kp2('8')">8</button><button class="key" onclick="kp2('9')">9</button>
-          <button class="key" onclick="kp2('4')">4</button><button class="key" onclick="kp2('5')">5</button><button class="key" onclick="kp2('6')">6</button>
-          <button class="key" onclick="kp2('1')">1</button><button class="key" onclick="kp2('2')">2</button><button class="key" onclick="kp2('3')">3</button>
-          <button class="key key-backspace" onclick="kb2()">⌫</button>
-          <button class="key" onclick="kp2('0')">0</button>
-          <button class="key key-enter" onclick="enterQty()">ENTER</button>
+        <div class="keypad-grid" id="qtyKeypad">
+          <button class="key" data-kp2="7">7</button><button class="key" data-kp2="8">8</button><button class="key" data-kp2="9">9</button>
+          <button class="key" data-kp2="4">4</button><button class="key" data-kp2="5">5</button><button class="key" data-kp2="6">6</button>
+          <button class="key" data-kp2="1">1</button><button class="key" data-kp2="2">2</button><button class="key" data-kp2="3">3</button>
+          <button class="key key-backspace" data-kb2="1">⌫</button>
+          <button class="key" data-kp2="0">0</button>
+          <button class="key key-enter" data-enter-qty="1">ENTER</button>
         </div>
       </div>
       <button class="btn-secondary" style="margin-top:12px" onclick="goBack(2)">
@@ -721,6 +713,29 @@ load();
 refreshBadge();
 if(state.job.attn || state.job.company) bootMain(); else showScreen('setupScreen');
 
+// ══════════════════════════════════════
+//  KEYPAD: pointerdown for instant response (no 300ms delay, no double-tap zoom)
+// ══════════════════════════════════════
+(function initKeypadPointerEvents(){
+  function bindKeypad(gridId){
+    const grid = document.getElementById(gridId);
+    if(!grid) return;
+    grid.addEventListener('pointerdown', function(e){
+      const btn = e.target.closest('button');
+      if(!btn) return;
+      e.preventDefault(); // prevents ghost click + double-tap zoom
+      if(btn.dataset.kp1 !== undefined) kp1(btn.dataset.kp1);
+      else if(btn.dataset.kb1 !== undefined) kb1();
+      else if(btn.dataset.enterHeight !== undefined) enterHeight();
+      else if(btn.dataset.kp2 !== undefined) kp2(btn.dataset.kp2);
+      else if(btn.dataset.kb2 !== undefined) kb2();
+      else if(btn.dataset.enterQty !== undefined) enterQty();
+    });
+  }
+  bindKeypad('heightKeypad');
+  bindKeypad('qtyKeypad');
+})();
+
 function showScreen(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
@@ -747,10 +762,17 @@ function addProductMemory(name){
 function acInput(){
   const val = document.getElementById('jobProduct').value.toLowerCase();
   const mem = getProductMemory();
-  const filtered = val ? mem.filter(x=>x.toLowerCase().includes(val)) : mem;
+  // Merge admin price-list materials (deduplicated, price-list first)
+  const priceNames = (state.priceList||[]).map(p=>p.name);
+  const allSuggestions = [...new Set([...priceNames, ...mem])];
+  const filtered = val ? allSuggestions.filter(x=>x.toLowerCase().includes(val)) : allSuggestions;
   const dd = document.getElementById('acDropdown');
   if(filtered.length===0){ dd.classList.remove('open'); return; }
-  dd.innerHTML = filtered.map(x=>`<div class="ac-item" onmousedown="acSelect('${escH(x)}')">${escH(x)}</div>`).join('');
+  dd.innerHTML = filtered.map(x=>{
+    const priceEntry = (state.priceList||[]).find(p=>p.name.toLowerCase()===x.toLowerCase());
+    const hint = priceEntry ? `<span style="font-size:11px;color:var(--accent2);font-family:'DM Mono',monospace;font-weight:600;float:right">${priceEntry.price} AED/sqm</span>` : '';
+    return `<div class="ac-item" onmousedown="acSelect('${escH(x)}')">${escH(x)}${hint}</div>`;
+  }).join('');
   dd.classList.add('open');
 }
 function acSelect(val){ document.getElementById('jobProduct').value=val; acHide(); }
